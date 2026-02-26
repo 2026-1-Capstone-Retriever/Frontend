@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:safepath/features/home/home_screen.dart';
 import 'package:safepath/features/settings/settings_screen.dart';
+import 'package:safepath/features/signin/signin_screen.dart';
 
 /// ========================================================================
 /// 사용 예시:
@@ -29,11 +30,14 @@ import 'package:safepath/features/settings/settings_screen.dart';
 ///
 /// ========================================================================
 class AppRouter {
-  static const String home = '/';
+  static const String signin = '/';
+  static const String home = '/home';
   static const String settings = '/settings';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case signin:
+        return MaterialPageRoute(builder: (_) => const SignInScreen());
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       case AppRouter.settings:
