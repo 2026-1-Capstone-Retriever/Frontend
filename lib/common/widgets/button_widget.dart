@@ -72,6 +72,12 @@ class CustomButton extends StatelessWidget {
   /// 작은 부제목 스타일 (null이면 AppTextStyles.bodyRegular 사용)
   final TextStyle? subtitleStyle;
 
+  /// 아이콘 ↔ 제목 사이 간격 (기본 10)
+  final double iconTitleSpacing;
+
+  /// 제목 ↔ 부제목 사이 간격 (기본 13)
+  final double titleSubtitleSpacing;
+
   final VoidCallback? onTap;
 
   const CustomButton({
@@ -83,7 +89,7 @@ class CustomButton extends StatelessWidget {
     this.iconColor = ColorCollection.main,
     this.width,
     this.height,
-    this.padding = const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+    this.padding = const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
     this.backgroundColor = ColorCollection.background,
     this.borderColor = ColorCollection.main,
     this.borderWidth = 3,
@@ -92,6 +98,8 @@ class CustomButton extends StatelessWidget {
     this.subtitleColor = ColorCollection.point,
     this.titleStyle,
     this.subtitleStyle,
+    this.iconTitleSpacing = 10,
+    this.titleSubtitleSpacing = 13,
     this.onTap,
   });
 
@@ -103,6 +111,7 @@ class CustomButton extends StatelessWidget {
         width: width,
         height: height,
         padding: padding,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(borderRadius),
@@ -114,7 +123,7 @@ class CustomButton extends StatelessWidget {
           children: [
             if (icon != null) ...[
               Icon(icon, color: iconColor, size: iconSize),
-              const SizedBox(height: 10),
+              SizedBox(height: iconTitleSpacing),
             ],
             if (title != null)
               Text(
@@ -125,7 +134,7 @@ class CustomButton extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             if (subtitle != null) ...[
-              const SizedBox(height: 13),
+              SizedBox(height: titleSubtitleSpacing),
               Text(
                 subtitle!,
                 style: (subtitleStyle ?? AppTextStyles.bodyRegular).copyWith(
