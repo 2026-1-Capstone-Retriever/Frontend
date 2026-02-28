@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:safepath/features/home/home_screen.dart';
+import 'package:safepath/features/detection/detection_screen.dart';
+import 'package:safepath/features/navigation/navigation_screen.dart';
 import 'package:safepath/features/settings/settings_screen.dart';
 import 'package:safepath/features/signin/signin_screen.dart';
+import 'package:safepath/layout/layout.dart';
 
 /// ========================================================================
 /// 사용 예시:
@@ -33,15 +35,21 @@ class AppRouter {
   static const String signin = '/';
   static const String home = '/home';
   static const String settings = '/settings';
+  static const String navigation = '/navigation';
+  static const String detection = '/detection';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case signin:
         return MaterialPageRoute(builder: (_) => const SignInScreen());
       case home:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
+        return MaterialPageRoute(builder: (_) => const MainLayout());
       case AppRouter.settings:
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
+      case navigation:
+        return MaterialPageRoute(builder: (_) => const NavigationScreen());
+      case detection:
+        return MaterialPageRoute(builder: (_) => const DetectionScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>
