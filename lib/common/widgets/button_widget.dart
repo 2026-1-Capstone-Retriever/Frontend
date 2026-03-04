@@ -105,45 +105,55 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    // Semantics: 스크린 리더(TalkBack/VoiceOver)에 버튼 역할과 내용을 한 번에 전달
+    // excludeSemantics: 내부 Icon·Text가 개별로 읽히지 않도록 차단
+    return Semantics(
+      button: true,
+      label: [title, subtitle].whereType<String>().join(', '),
+      enabled: onTap != null,
       onTap: onTap,
-      child: Container(
-        width: width,
-        height: height,
-        padding: padding,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(borderRadius),
-          border: Border.all(color: borderColor, width: borderWidth),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (icon != null) ...[
-              Icon(icon, color: iconColor, size: iconSize),
-              SizedBox(height: iconTitleSpacing),
-            ],
-            if (title != null)
-              Text(
-                title!,
-                style: (titleStyle ?? AppTextStyles.title1).copyWith(
-                  color: titleColor,
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: Container(
+          width: width,
+          height: height,
+          padding: padding,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(borderRadius),
+            border: Border.all(color: borderColor, width: borderWidth),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, color: iconColor, size: iconSize),
+                SizedBox(height: iconTitleSpacing),
+              ],
+              if (title != null)
+                Text(
+                  title!,
+                  style: (titleStyle ?? AppTextStyles.title1).copyWith(
+                    color: titleColor,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-            if (subtitle != null) ...[
-              SizedBox(height: titleSubtitleSpacing),
-              Text(
-                subtitle!,
-                style: (subtitleStyle ?? AppTextStyles.bodyRegular).copyWith(
-                  color: subtitleColor,
+              if (subtitle != null) ...[
+                SizedBox(height: titleSubtitleSpacing),
+                Text(
+                  subtitle!,
+                  style: (subtitleStyle ?? AppTextStyles.bodyRegular).copyWith(
+                    color: subtitleColor,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
