@@ -46,52 +46,45 @@ class CustomTitleBar extends StatelessWidget implements PreferredSizeWidget {
       width: double.infinity,
       color: ColorCollection.background,
       padding: EdgeInsets.fromLTRB(16, topPadding, 16, 0),
-      child: showBackButton
-          ? Row(
-              children: [
-                Semantics(
-                  button: true,
-                  label: '뒤로 가기',
-                  excludeSemantics: true,
-                  child: InkWell(
-                    onTap: onBack ?? () => Navigator.pop(context),
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: ColorCollection.point.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: ColorCollection.point.withValues(alpha: 0.4),
-                          width: 1.5,
-                        ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (showBackButton)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Semantics(
+                button: true,
+                label: '뒤로 가기',
+                excludeSemantics: true,
+                child: InkWell(
+                  onTap: onBack ?? () => Navigator.pop(context),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: ColorCollection.point.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: ColorCollection.point.withValues(alpha: 0.4),
+                        width: 1.5,
                       ),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        color: ColorCollection.point,
-                        size: 24,
-                      ),
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back,
+                      color: ColorCollection.point,
+                      size: 24,
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  title,
-                  style: AppTextStyles.title2.copyWith(
-                    color: ColorCollection.point,
-                  ),
-                ),
-              ],
-            )
-          : Center(
-              child: Text(
-                title,
-                style: AppTextStyles.title2.copyWith(
-                  color: ColorCollection.point,
-                ),
               ),
             ),
+          Text(
+            title,
+            style: AppTextStyles.title2.copyWith(color: ColorCollection.point),
+          ),
+        ],
+      ),
     );
   }
 }
