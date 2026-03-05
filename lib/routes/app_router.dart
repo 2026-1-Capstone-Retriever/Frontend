@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:safepath/features/detection/detection_screen.dart';
 import 'package:safepath/features/navigation/navigation_screen.dart';
 import 'package:safepath/features/settings/settings_screen.dart';
+import 'package:safepath/features/settings/userguide_screen.dart';
 import 'package:safepath/features/signin/signin_screen.dart';
 import 'package:safepath/layout/layout.dart';
 
@@ -35,6 +36,7 @@ class AppRouter {
   static const String signin = '/';
   static const String home = '/home';
   static const String settings = '/settings';
+  static const String userguide = '/settings/userguide';
   static const String navigation = '/navigation';
   static const String detection = '/detection';
 
@@ -50,6 +52,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const NavigationScreen());
       case detection:
         return MaterialPageRoute(builder: (_) => const DetectionScreen());
+      case userguide:
+        return MaterialPageRoute(builder: (_) => const UserGuideScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>
