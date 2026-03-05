@@ -45,7 +45,7 @@ class SignInScreen extends StatelessWidget {
               subtitleColor: ColorCollection.point,
               subtitleStyle: AppTextStyles.bodyBold,
               borderColor: ColorCollection.point,
-              // onTap: () {},
+              onTap: () => Navigator.pushNamed(context, AppRouter.userguide),
             ),
           ],
         ),
