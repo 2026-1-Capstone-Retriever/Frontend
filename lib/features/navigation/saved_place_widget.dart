@@ -41,7 +41,7 @@ class SavedPlaceWidget extends StatelessWidget {
           decoration: BoxDecoration(
             color: ColorCollection.point.withOpacity(0.1),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: ColorCollection.point, width: 2),
+            border: Border.all(color: ColorCollection.point, width: 1),
           ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 16, 16, 16),
@@ -54,7 +54,7 @@ class SavedPlaceWidget extends StatelessWidget {
                     height: 35,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: ColorCollection.main,
+                      color: iconBackgroundColor,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Icon(category?.icon, color: iconColor, size: 25),
@@ -83,7 +83,7 @@ class SavedPlaceWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 15),
+                const SizedBox(width: 10),
                 if (isEditMode)
                   GestureDetector(
                     onTap: onDelete,
