@@ -1,30 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:safepath/common/theme/text_styles.dart';
-import 'package:safepath/common/theme/color_collection.dart';
 import 'package:safepath/common/widgets/title_bar_widget.dart';
+import 'package:safepath/features/detection/detection_active_view.dart';
+import 'package:safepath/features/detection/detection_idle_view.dart';
 
-class DetectionScreen extends StatelessWidget {
+class DetectionScreen extends StatefulWidget {
   const DetectionScreen({super.key});
+
+  @override
+  State<DetectionScreen> createState() => _DetectionScreenState();
+}
+
+class _DetectionScreenState extends State<DetectionScreen> {
+  bool _isDetecting = false;
+
+  // TODO: 실제 탐지 로직 연결 시 여기서 카메라/모델 제어
+  int _detectedCount = 0;
+
+  void _startDetection() {
+    setState(() {
+      _isDetecting = true;
+      _detectedCount = 0;
+    });
+  }
+
+  void _stopDetection() {
+    setState(() {
+      _isDetecting = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomTitleBar(title: '실외 장애물 탐지'),
+      appBar: const CustomTitleBar(title: '실외 장애물 탐지'),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '실외 장애물 탐지',
-                style: AppTextStyles.title2.copyWith(
-                  color: ColorCollection.point,
-                ),
-              ),
-            ],
-          ),
-        ),
+        child: _isDetecting
+            ? DetectionActiveView(
+                onStop: _stopDetection,
+                detectedCount: _detectedCount,
+              )
+            : DetectionIdleView(onStart: _startDetection),
       ),
     );
   }
