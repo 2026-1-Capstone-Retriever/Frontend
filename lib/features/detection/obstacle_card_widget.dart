@@ -73,7 +73,7 @@ class _NearCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: ColorCollection.point.withValues(alpha: 0.1),
+        color: ColorCollection.main.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: ColorCollection.main, width: 3),
       ),
@@ -97,7 +97,7 @@ class _NearCard extends StatelessWidget {
                 const Icon(
                   Icons.notifications_active,
                   color: ColorCollection.main,
-                  size: 18,
+                  size: 20,
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -128,10 +128,7 @@ class _MidCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorCollection.point.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: ColorCollection.point.withValues(alpha: 0.5),
-          width: 2,
-        ),
+        border: Border.all(color: ColorCollection.main, width: 2),
       ),
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       child: Column(
@@ -240,7 +237,7 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: ColorCollection.main, size: 18),
+        Icon(icon, color: ColorCollection.main, size: 20),
         const SizedBox(width: 8),
         Text(
           '$label : $value',
