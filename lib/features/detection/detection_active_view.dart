@@ -47,7 +47,7 @@ class DetectionActiveView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,8 +101,8 @@ class DetectionActiveView extends StatelessWidget {
                 children: [
                   Text(
                     '$detectedCount',
-                    style: AppTextStyles.headline.copyWith(
-                      color: ColorCollection.point,
+                    style: AppTextStyles.title1.copyWith(
+                      color: ColorCollection.main,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -118,24 +118,29 @@ class DetectionActiveView extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // 감지된 장애물 섹션
+          // 감지된 장애물 섹션 (이 영역만 스크롤)
           Text(
             '감지된 장애물',
             style: AppTextStyles.title2.copyWith(color: ColorCollection.point),
           ),
           const SizedBox(height: 16),
 
-          // TODO: 실제 탐지 결과로 교체
-          for (final o in _dummyObstacles) ...[
-            ObstacleCard(
-              name: o.name,
-              distance: o.distance,
-              position: o.position,
-              vibration: o.vibration,
-              proximity: o.proximity,
+          Expanded(
+            child: ListView.separated(
+              itemCount: _dummyObstacles.length, // TODO: 실제 탐지 결과로 교체
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (_, index) {
+                final o = _dummyObstacles[index];
+                return ObstacleCard(
+                  name: o.name,
+                  distance: o.distance,
+                  position: o.position,
+                  vibration: o.vibration,
+                  proximity: o.proximity,
+                );
+              },
             ),
-            const SizedBox(height: 12),
-          ],
+          ),
         ],
       ),
     );

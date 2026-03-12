@@ -31,15 +31,18 @@ class _DetectionScreenState extends State<DetectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomTitleBar(title: '실외 장애물 탐지'),
-      body: SafeArea(
-        child: _isDetecting
-            ? DetectionActiveView(
-                onStop: _stopDetection,
-                detectedCount: _detectedCount,
-              )
-            : DetectionIdleView(onStart: _startDetection),
+    return PopScope(
+      canPop: !_isDetecting,
+      child: Scaffold(
+        appBar: const CustomTitleBar(title: '실외 장애물 탐지'),
+        body: SafeArea(
+          child: _isDetecting
+              ? DetectionActiveView(
+                  onStop: _stopDetection,
+                  detectedCount: _detectedCount,
+                )
+              : DetectionIdleView(onStart: _startDetection),
+        ),
       ),
     );
   }
