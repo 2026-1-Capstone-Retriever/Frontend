@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:safepath/features/home/home_screen.dart';
+import 'package:safepath/features/detection/detection_screen.dart';
+import 'package:safepath/features/navigation/navigation_ing_screen.dart';
+import 'package:safepath/features/navigation/navigation_screen.dart';
+import 'package:safepath/features/navigation/saved_place_screen.dart';
 import 'package:safepath/features/settings/settings_screen.dart';
+import 'package:safepath/features/settings/userguide_screen.dart';
 import 'package:safepath/features/signin/signin_screen.dart';
+import 'package:safepath/layout/layout.dart';
 
 /// ========================================================================
 /// 사용 예시:
@@ -33,15 +38,30 @@ class AppRouter {
   static const String signin = '/';
   static const String home = '/home';
   static const String settings = '/settings';
+  static const String userguide = '/settings/userguide';
+  static const String navigation = '/navigation';
+  static const String navigationing = '/navigation/ing';
+  static const String savedplace = '/navigation/savedplace';
+  static const String detection = '/detection';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case signin:
         return MaterialPageRoute(builder: (_) => const SignInScreen());
       case home:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
+        return MaterialPageRoute(builder: (_) => const MainLayout());
       case AppRouter.settings:
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
+      case navigation:
+        return MaterialPageRoute(builder: (_) => const NavigationScreen());
+      case detection:
+        return MaterialPageRoute(builder: (_) => const DetectionScreen());
+      case userguide:
+        return MaterialPageRoute(builder: (_) => const UserGuideScreen());
+      case savedplace:
+        return MaterialPageRoute(builder: (_) => const SavedPlaceScreen());
+      case navigationing:
+        return MaterialPageRoute(builder: (_) => const NavigationIngScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>
