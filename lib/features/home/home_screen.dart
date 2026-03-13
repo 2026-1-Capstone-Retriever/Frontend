@@ -4,10 +4,10 @@ import 'package:safepath/common/widgets/logo_widget.dart';
 import 'package:safepath/common/widgets/button_widget.dart';
 import 'package:safepath/common/theme/text_styles.dart';
 import 'package:safepath/common/theme/color_collection.dart';
-import 'package:safepath/routes/app_router.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final void Function(int) onTabChange;
+  const HomeScreen({super.key, required this.onTabChange});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
                   subtitleColor: ColorCollection.point,
                   subtitleStyle: AppTextStyles.labelRegular,
                   borderColor: ColorCollection.main,
-                  onTap: () => Navigator.pushNamed(context, AppRouter.detection),
+                  onTap: () => onTabChange(1),
                 ),
               ),
               const SizedBox(height: 32),
@@ -50,7 +50,7 @@ class HomeScreen extends StatelessWidget {
                   subtitleColor: ColorCollection.point,
                   subtitleStyle: AppTextStyles.labelRegular,
                   borderColor: ColorCollection.main,
-                  onTap: () => Navigator.pushNamed(context, AppRouter.navigation),
+                  onTap: () => onTabChange(2),
                 ),
               ),
               const SizedBox(height: 32),
@@ -67,7 +67,7 @@ class HomeScreen extends StatelessWidget {
                   subtitleColor: ColorCollection.point,
                   subtitleStyle: AppTextStyles.labelRegular,
                   borderColor: ColorCollection.main,
-                  onTap: () => Navigator.pushNamed(context, AppRouter.settings),
+                  onTap: () => onTabChange(3),
                 ),
               ),
               const SizedBox(height: 32),

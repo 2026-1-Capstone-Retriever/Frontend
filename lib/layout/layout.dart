@@ -16,11 +16,11 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = const [
-    HomeScreen(),
-    DetectionScreen(),
-    NavigationScreen(),
-    SettingsScreen(),
+  late final List<Widget> _pages = [
+    HomeScreen(onTabChange: _onTap),
+    const DetectionScreen(),
+    const NavigationScreen(),
+    const SettingsScreen(),
   ];
 
   void _onTap(int index) {
