@@ -126,33 +126,36 @@ class CustomButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(borderRadius),
             border: Border.all(color: borderColor, width: borderWidth),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (icon != null) ...[
-                Icon(icon, color: iconColor, size: iconSize),
-                SizedBox(height: iconTitleSpacing),
-              ],
-              if (title != null)
-                Text(
-                  title!,
-                  style: (titleStyle ?? AppTextStyles.title1).copyWith(
-                    color: titleColor,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, color: iconColor, size: iconSize),
+                  SizedBox(height: iconTitleSpacing),
+                ],
+                if (title != null)
+                  Text(
+                    title!,
+                    style: (titleStyle ?? AppTextStyles.title1).copyWith(
+                      color: titleColor,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              if (subtitle != null) ...[
-                SizedBox(height: titleSubtitleSpacing),
-                Text(
-                  subtitle!,
-                  style: (subtitleStyle ?? AppTextStyles.bodyRegular).copyWith(
-                    color: subtitleColor,
+                if (subtitle != null) ...[
+                  SizedBox(height: titleSubtitleSpacing),
+                  Text(
+                    subtitle!,
+                    style: (subtitleStyle ?? AppTextStyles.bodyRegular).copyWith(
+                      color: subtitleColor,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
