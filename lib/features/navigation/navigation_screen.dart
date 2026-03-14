@@ -6,7 +6,7 @@ import 'package:safepath/common/widgets/action_button_widget.dart';
 import 'package:safepath/common/widgets/text_input_bar.dart';
 import 'package:safepath/common/widgets/title_bar_widget.dart';
 import 'package:safepath/features/navigation/current_place_widget.dart';
-import 'package:safepath/features/navigation/edit_button.dart';
+import 'package:safepath/features/navigation/more_button.dart';
 import 'package:safepath/features/navigation/saved_place_widget.dart';
 import 'package:safepath/routes/app_router.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -121,7 +121,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                         fontSize: 20,
                       ),
                     ),
-                    EditButton(),
+                    MoreButton(),
                   ],
                 ),
                 const SizedBox(height: 25),
