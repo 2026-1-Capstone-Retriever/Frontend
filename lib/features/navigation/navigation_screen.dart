@@ -8,8 +8,11 @@ import 'package:safepath/common/widgets/title_bar_widget.dart';
 import 'package:safepath/features/navigation/current_place_widget.dart';
 import 'package:safepath/features/navigation/more_button.dart';
 import 'package:safepath/features/navigation/saved_place_widget.dart';
+import 'package:safepath/data/saved_place_dummy.dart';
 import 'package:safepath/routes/app_router.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key});
@@ -25,6 +28,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
   /// 텍스트 입력 여부 확인
   bool get _hasDestination => destinationController.text.trim().isNotEmpty;
 
+  /// 위치 변수
+  String currentLocation = "현재 위치 불러오는 중...";
+  String selectedLocation = "목적지를 선택해 주세요.";
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +39,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
     destinationController.addListener(() {
       setState(() {});
     });
+
+    loadLocation();
   }
 
   /// destinationController의 listener 해제
@@ -74,6 +83,73 @@ class _NavigationScreenState extends State<NavigationScreen> {
     });
   }
 
+  /// 현재 위치 가져오기
+  Future<Position> getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // 위치 서비스 활성화 확인
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw Exception('위치 서비스가 꺼져 있습니다.');
+    }
+
+    // 권한 확인
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.denied) {
+      throw Exception('위치 권한이 거부되었습니다.');
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception('위치 권한이 영구적으로 거부되었습니다.');
+    }
+
+    // 현재 위치 가져오기
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+  }
+
+  void loadLocation() async {
+    try {
+      final position = await getCurrentLocation();
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+        localeIdentifier: "ko_KR",
+      );
+
+      Placemark place = placemarks.first;
+
+      // administrativeArea : 서울특별시
+      // subAdministrativeArea : 성북구
+      // thoroughfare : 정릉로
+      // subThoroughfare : 77
+
+      String address = [
+        place.administrativeArea,
+        place.subAdministrativeArea,
+        place.locality,
+        place.subLocality,
+        place.thoroughfare,
+        place.subThoroughfare,
+      ].where((e) => e != null && e!.isNotEmpty).join(' ');
+
+      setState(() {
+        currentLocation = address;
+      });
+    } catch (e) {
+      setState(() {
+        currentLocation = "위치 불러오기 실패";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,10 +173,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
-                CurrentPlaceWidget(
-                  label: '현재 위치',
-                  location: '서울특별시 성북구 정릉로 77',
-                ),
+                CurrentPlaceWidget(label: '현재 위치', location: currentLocation),
+                const SizedBox(height: 16),
+                CurrentPlaceWidget(label: '목적지 위치', location: selectedLocation),
                 const SizedBox(height: 16),
                 ActionButton(
                   label: '안내 시작',
@@ -132,6 +207,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                           setState(() {
                             destinationController.text =
                                 (place as dynamic).label;
+                            selectedLocation = (place as dynamic).location;
                           });
                         }
                       },
@@ -139,17 +215,22 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   ],
                 ),
                 const SizedBox(height: 25),
-                SavedPlaceWidget(
-                  label: '집',
-                  location: '서울특별시 성북구 솔샘로8길',
-                  category: PlaceCategory.home,
-                  onTap: () {
-                    setState(() {
-                      destinationController.text = '집';
-                    });
-                  },
-                ),
-                const SizedBox(height: 25),
+                ...savedPlaces.take(2).map((place) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 25),
+                    child: SavedPlaceWidget(
+                      label: place.label,
+                      location: place.location,
+                      category: place.category,
+                      onTap: () {
+                        setState(() {
+                          destinationController.text = place.label;
+                          selectedLocation = place.location;
+                        });
+                      },
+                    ),
+                  );
+                }).toList(),
 
                 /// 최근 장소 섹션
                 Text(
@@ -169,6 +250,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     });
                   },
                 ),
+                const SizedBox(height: 25),
               ],
             ),
           ),
