@@ -3,8 +3,8 @@ import 'package:safepath/common/theme/color_collection.dart';
 import 'package:safepath/common/theme/text_styles.dart';
 import 'package:safepath/routes/app_router.dart';
 
-class EditButton extends StatelessWidget {
-  const EditButton({super.key});
+class MoreButton extends StatelessWidget {
+  const MoreButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +26,14 @@ class EditButton extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(Icons.edit, size: 18, color: ColorCollection.point),
+                Icon(
+                  Icons.more_horiz_rounded,
+                  size: 25,
+                  color: ColorCollection.point,
+                ),
                 const SizedBox(width: 5),
                 Text(
-                  '편집',
+                  '더보기',
                   style: AppTextStyles.labelRegular.copyWith(
                     color: ColorCollection.point,
                   ),
