@@ -45,8 +45,16 @@ class _MainLayoutState extends State<MainLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (_currentIndex != 0) {
+          setState(() => _currentIndex = 0);
+        }
+        // 홈 탭에서는 뒤로가기 무시 (로그인으로 안 돌아감)
+      },
+      child: Scaffold(
+        body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           border: Border(
@@ -81,6 +89,8 @@ class _MainLayoutState extends State<MainLayout> {
           ],
         ),
       ),
+      ),
     );
   }
 }
+
