@@ -121,7 +121,21 @@ class _NavigationScreenState extends State<NavigationScreen> {
                         fontSize: 20,
                       ),
                     ),
-                    MoreButton(),
+                    MoreButton(
+                      onTap: () async {
+                        final place = await Navigator.pushNamed(
+                          context,
+                          AppRouter.savedplace,
+                        );
+
+                        if (place != null) {
+                          setState(() {
+                            destinationController.text =
+                                (place as dynamic).label;
+                          });
+                        }
+                      },
+                    ),
                   ],
                 ),
                 const SizedBox(height: 25),
@@ -129,6 +143,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   label: '집',
                   location: '서울특별시 성북구 솔샘로8길',
                   category: PlaceCategory.home,
+                  onTap: () {
+                    setState(() {
+                      destinationController.text = '집';
+                    });
+                  },
                 ),
                 const SizedBox(height: 25),
 
@@ -141,7 +160,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   ),
                 ),
                 const SizedBox(height: 25),
-                SavedPlaceWidget(label: '집', location: '서울특별시 성북구 솔샘로8길'),
+                SavedPlaceWidget(
+                  label: '회사',
+                  location: '서울특별시 성북구 솔샘로98길',
+                  onTap: () {
+                    setState(() {
+                      destinationController.text = '회사';
+                    });
+                  },
+                ),
               ],
             ),
           ),

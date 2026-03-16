@@ -4,7 +4,8 @@ import 'package:safepath/common/theme/text_styles.dart';
 import 'package:safepath/routes/app_router.dart';
 
 class MoreButton extends StatelessWidget {
-  const MoreButton({super.key});
+  final VoidCallback? onTap;
+  const MoreButton({super.key, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,7 @@ class MoreButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       child: InkWell(
         borderRadius: BorderRadius.circular(10),
-        onTap: () => Navigator.pushNamed(context, AppRouter.savedplace),
+        onTap: onTap,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 5),
           decoration: BoxDecoration(
