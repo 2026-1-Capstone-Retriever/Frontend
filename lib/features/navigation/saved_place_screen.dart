@@ -36,6 +36,11 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
                       location: place.location,
                       category: place.category,
                       isEditMode: isEditMode,
+                      onTap: () {
+                        if (!isEditMode) {
+                          Navigator.pop(context, place);
+                        }
+                      },
                     );
                   },
                   separatorBuilder: (context, index) =>
