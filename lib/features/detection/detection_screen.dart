@@ -4,7 +4,9 @@ import 'package:safepath/features/detection/detection_active_view.dart';
 import 'package:safepath/features/detection/detection_idle_view.dart';
 
 class DetectionScreen extends StatefulWidget {
-  const DetectionScreen({super.key});
+  final ValueChanged<bool>? onDetectingChanged;
+
+  const DetectionScreen({super.key, this.onDetectingChanged});
 
   @override
   State<DetectionScreen> createState() => _DetectionScreenState();
@@ -21,12 +23,14 @@ class _DetectionScreenState extends State<DetectionScreen> {
       _isDetecting = true;
       _detectedCount = 0;
     });
+    widget.onDetectingChanged?.call(true);
   }
 
   void _stopDetection() {
     setState(() {
       _isDetecting = false;
     });
+    widget.onDetectingChanged?.call(false);
   }
 
   @override

@@ -15,10 +15,11 @@ class MainLayout extends StatefulWidget {
 
 class _MainLayoutState extends State<MainLayout> {
   int _currentIndex = 0;
+  bool _isDetecting = false;
 
   late final List<Widget> _pages = [
     HomeScreen(onTabChange: _onTap),
-    const DetectionScreen(),
+    DetectionScreen(onDetectingChanged: (v) => setState(() => _isDetecting = v)),
     const NavigationScreen(),
     const SettingsScreen(),
   ];
@@ -48,6 +49,7 @@ class _MainLayoutState extends State<MainLayout> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
+        if (_isDetecting) return; // 탐지 중이면 뒤로가기 완전 차단
         if (_currentIndex != 0) {
           setState(() => _currentIndex = 0);
         }
