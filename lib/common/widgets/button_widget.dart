@@ -72,6 +72,12 @@ class CustomButton extends StatelessWidget {
   /// 작은 부제목 스타일 (null이면 AppTextStyles.bodyRegular 사용)
   final TextStyle? subtitleStyle;
 
+  /// 아이콘 ↔ 제목 사이 간격 (기본 10)
+  final double iconTitleSpacing;
+
+  /// 제목 ↔ 부제목 사이 간격 (기본 13)
+  final double titleSubtitleSpacing;
+
   final VoidCallback? onTap;
 
   const CustomButton({
@@ -83,7 +89,7 @@ class CustomButton extends StatelessWidget {
     this.iconColor = ColorCollection.main,
     this.width,
     this.height,
-    this.padding = const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+    this.padding = const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
     this.backgroundColor = ColorCollection.background,
     this.borderColor = ColorCollection.main,
     this.borderWidth = 3,
@@ -92,49 +98,65 @@ class CustomButton extends StatelessWidget {
     this.subtitleColor = ColorCollection.point,
     this.titleStyle,
     this.subtitleStyle,
+    this.iconTitleSpacing = 10,
+    this.titleSubtitleSpacing = 13,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    // Semantics: 스크린 리더(TalkBack/VoiceOver)에 버튼 역할과 내용을 한 번에 전달
+    // excludeSemantics: 내부 Icon·Text가 개별로 읽히지 않도록 차단
+    return Semantics(
+      button: true,
+      label: [title, subtitle].whereType<String>().join(', '),
+      enabled: onTap != null,
       onTap: onTap,
-      child: Container(
-        width: width,
-        height: height,
-        padding: padding,
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(borderRadius),
-          border: Border.all(color: borderColor, width: borderWidth),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (icon != null) ...[
-              Icon(icon, color: iconColor, size: iconSize),
-              const SizedBox(height: 10),
-            ],
-            if (title != null)
-              Text(
-                title!,
-                style: (titleStyle ?? AppTextStyles.title1).copyWith(
-                  color: titleColor,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            if (subtitle != null) ...[
-              const SizedBox(height: 13),
-              Text(
-                subtitle!,
-                style: (subtitleStyle ?? AppTextStyles.bodyRegular).copyWith(
-                  color: subtitleColor,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ],
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: Container(
+          width: width,
+          height: height,
+          padding: padding,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(borderRadius),
+            border: Border.all(color: borderColor, width: borderWidth),
+          ),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, color: iconColor, size: iconSize),
+                  SizedBox(height: iconTitleSpacing),
+                ],
+                if (title != null)
+                  Text(
+                    title!,
+                    style: (titleStyle ?? AppTextStyles.title1).copyWith(
+                      color: titleColor,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                if (subtitle != null) ...[
+                  SizedBox(height: titleSubtitleSpacing),
+                  Text(
+                    subtitle!,
+                    style: (subtitleStyle ?? AppTextStyles.bodyRegular).copyWith(
+                      color: subtitleColor,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );
