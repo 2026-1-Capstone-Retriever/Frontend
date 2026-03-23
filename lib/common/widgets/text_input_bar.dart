@@ -8,6 +8,7 @@ class TextInputBar extends StatelessWidget {
   final bool showSearchIcon; // 검색 아이콘 표시 여부 (default : true)
   final VoidCallback? micTap; // 음성 텍스트 입력 아이콘
   final ValueChanged<String>? onSubmitted;
+  final VoidCallback? onClear; // 텍스트 및 외부 상태
 
   const TextInputBar({
     super.key,
@@ -16,6 +17,7 @@ class TextInputBar extends StatelessWidget {
     this.showSearchIcon = true,
     this.micTap,
     this.onSubmitted,
+    this.onClear,
   });
 
   @override
@@ -44,6 +46,9 @@ class TextInputBar extends StatelessWidget {
                     icon: const Icon(Icons.close, color: ColorCollection.main),
                     onPressed: () {
                       controller.clear();
+                      if (onClear != null) {
+                        onClear!();
+                      }
                     },
                   );
                 },
