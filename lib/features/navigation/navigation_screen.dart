@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:safepath/common/enum/place_category.dart';
 import 'package:safepath/common/theme/text_styles.dart';
 import 'package:safepath/common/theme/color_collection.dart';
 import 'package:safepath/common/widgets/action_button_widget.dart';
@@ -80,6 +79,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
       // 돌아왔을 때 입력값 초기화
       destinationController.clear();
       FocusManager.instance.primaryFocus?.unfocus();
+      selectedLocation = "목적지를 선택해 주세요.";
     });
   }
 
@@ -164,6 +164,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 /// 목적지 입력 섹션
                 TextInputBar(
                   controller: destinationController,
+                  onClear: () {
+                    selectedLocation = "목적지를 선택해 주세요.";
+                  },
                   hintText: '목적지를 입력하세요',
                   micTap: startSpeechInput,
                   onSubmitted: (_) {
@@ -247,6 +250,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   onTap: () {
                     setState(() {
                       destinationController.text = '회사';
+                      selectedLocation = '서울특별시 성북구 솔샘로98길';
                     });
                   },
                 ),
