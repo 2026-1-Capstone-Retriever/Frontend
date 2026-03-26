@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safepath/features/detection/detection_screen.dart';
+import 'package:safepath/features/navigation/add_place_screen.dart';
 import 'package:safepath/features/navigation/navigation_ing_screen.dart';
 import 'package:safepath/features/navigation/navigation_screen.dart';
 import 'package:safepath/features/navigation/saved_place_screen.dart';
@@ -42,6 +43,7 @@ class AppRouter {
   static const String navigation = '/navigation';
   static const String navigationing = '/navigation/ing';
   static const String savedplace = '/navigation/savedplace';
+  static const String addplace = '/navigation/savedplace/add';
   static const String detection = '/detection';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -62,6 +64,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const SavedPlaceScreen());
       case navigationing:
         return MaterialPageRoute(builder: (_) => const NavigationIngScreen());
+      case addplace:
+        return MaterialPageRoute(builder: (_) => const AddPlaceScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>
