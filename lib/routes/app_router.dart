@@ -8,6 +8,7 @@ import 'package:safepath/features/settings/app_info_screen.dart';
 import 'package:safepath/features/settings/privacy_policy_screen.dart';
 import 'package:safepath/features/settings/settings_screen.dart';
 import 'package:safepath/features/settings/term_screen.dart';
+import 'package:safepath/features/settings/user_info_screen.dart';
 import 'package:safepath/features/settings/userguide_screen.dart';
 import 'package:safepath/features/signin/signin_screen.dart';
 import 'package:safepath/layout/layout.dart';
@@ -42,6 +43,7 @@ class AppRouter {
   static const String signin = '/';
   static const String home = '/home';
   static const String settings = '/settings';
+  static const String userinfo = '/settings/userinfo';
   static const String userguide = '/settings/userguide';
   static const String appinfo = '/settings/appinfo';
   static const String term = '/settings/term';
@@ -78,6 +80,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const TermScreen());
       case policy:
         return MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen());
+      case userinfo:
+        return MaterialPageRoute(builder: (_) => const UserInfoScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>

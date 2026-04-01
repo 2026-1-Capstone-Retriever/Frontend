@@ -25,7 +25,7 @@ class SettingsScreen extends StatelessWidget {
               // 유저 프로필
               SettingsProfileWidget(
                 name: '홍길동',
-                onTap: () {}, // TODO: 프로필 편집 페이지 연결
+                onTap: () => Navigator.pushNamed(context, AppRouter.userinfo),
               ),
               const SizedBox(height: 32),
 
