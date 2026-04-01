@@ -25,22 +25,22 @@ class LogoWidget extends StatelessWidget {
             color: ColorCollection.main,
             borderRadius: BorderRadius.circular(16),
           ),
-          child: Icon(
-            Icons.route,
-            size: imageSize * 0.6,
-            color: ColorCollection.point,
-          ),
-          // TODO: 이미지 확정 시 아래 코드로 교체
-          // child: Image.asset(
-          //   'assets/images/logo.png',
-          //   width: imageSize,
-          //   height: imageSize,
+          // child: Icon(
+          //   Icons.route,
+          //   size: imageSize * 0.6,
+          //   color: ColorCollection.point,
           // ),
+          // TODO: 이미지 확정 시 아래 코드로 교체
+          child: Image.asset(
+            'assets/images/logo.png',
+            width: imageSize,
+            height: imageSize,
+          ),
         ),
         const SizedBox(height: 16),
         // SafePath 텍스트
         Text(
-          'SafePath',
+          '길벗',
           style: AppTextStyles.title1.copyWith(color: ColorCollection.point),
         ),
         const SizedBox(height: 4),
