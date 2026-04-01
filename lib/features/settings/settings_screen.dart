@@ -49,7 +49,8 @@ class SettingsScreen extends StatelessWidget {
                   SettingsInfoItem(
                     icon: Icons.info_outline,
                     label: '앱 정보',
-                    onTap: () {}, // TODO: 앱 정보 페이지 연결
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRouter.appinfo),
                   ),
                   SettingsInfoItem(
                     icon: Icons.help_outline,
@@ -60,12 +61,12 @@ class SettingsScreen extends StatelessWidget {
                   SettingsInfoItem(
                     icon: Icons.description_outlined,
                     label: '이용 약관',
-                    onTap: () {}, // TODO: 이용 약관 페이지 연결
+                    onTap: () => Navigator.pushNamed(context, AppRouter.term),
                   ),
                   SettingsInfoItem(
                     icon: Icons.shield_outlined,
                     label: '개인정보 처리 방침',
-                    onTap: () {}, // TODO: 개인정보 처리 방침 페이지 연결
+                    onTap: () => Navigator.pushNamed(context, AppRouter.policy),
                   ),
                 ],
               ),

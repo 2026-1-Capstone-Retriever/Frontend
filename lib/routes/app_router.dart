@@ -4,7 +4,10 @@ import 'package:safepath/features/navigation/add_place_screen.dart';
 import 'package:safepath/features/navigation/navigation_ing_screen.dart';
 import 'package:safepath/features/navigation/navigation_screen.dart';
 import 'package:safepath/features/navigation/saved_place_screen.dart';
+import 'package:safepath/features/settings/app_info_screen.dart';
+import 'package:safepath/features/settings/privacy_policy_screen.dart';
 import 'package:safepath/features/settings/settings_screen.dart';
+import 'package:safepath/features/settings/term_screen.dart';
 import 'package:safepath/features/settings/userguide_screen.dart';
 import 'package:safepath/features/signin/signin_screen.dart';
 import 'package:safepath/layout/layout.dart';
@@ -40,6 +43,9 @@ class AppRouter {
   static const String home = '/home';
   static const String settings = '/settings';
   static const String userguide = '/settings/userguide';
+  static const String appinfo = '/settings/appinfo';
+  static const String term = '/settings/term';
+  static const String policy = '/settings/policy';
   static const String navigation = '/navigation';
   static const String navigationing = '/navigation/ing';
   static const String savedplace = '/navigation/savedplace';
@@ -66,6 +72,12 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const NavigationIngScreen());
       case addplace:
         return MaterialPageRoute(builder: (_) => const AddPlaceScreen());
+      case appinfo:
+        return MaterialPageRoute(builder: (_) => const AppInfoScreen());
+      case term:
+        return MaterialPageRoute(builder: (_) => const TermScreen());
+      case policy:
+        return MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>
