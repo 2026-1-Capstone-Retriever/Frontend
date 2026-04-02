@@ -5,9 +5,15 @@ import 'package:safepath/routes/app_router.dart';
 import 'package:safepath/common/widgets/logo_widget.dart';
 import 'package:safepath/common/widgets/button_widget.dart';
 import 'package:safepath/common/theme/color_collection.dart';
+// import 'package:safepath/service/auth_service.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
+
+  // TODO: 카카오 로그인 구현 완료 후 실제 로그인 로직으로 교체
+  void _onKakaoLogin(BuildContext context) {
+    Navigator.pushReplacementNamed(context, AppRouter.home);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +36,7 @@ class SignInScreen extends StatelessWidget {
               subtitleColor: ColorCollection.background,
               subtitleStyle: AppTextStyles.bodyBold,
               borderColor: ColorCollection.main,
-              onTap: () => Navigator.pushNamed(context, AppRouter.home),
+              onTap: () => _onKakaoLogin(context),
             ),
             SizedBox(height: 28),
             CustomButton(
