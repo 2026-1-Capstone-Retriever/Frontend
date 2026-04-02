@@ -21,6 +21,7 @@ class AppTextStyles {
   static const TextStyle headline = TextStyle(
     fontFamily: 'NanumSquareNeo',
     fontWeight: FontWeight.w800,
+    fontVariations: [FontVariation('wght', 800)],
     fontSize: 30,
     height: 1.3,
     letterSpacing: 0.4,
@@ -34,6 +35,7 @@ class AppTextStyles {
   static const TextStyle title1 = TextStyle(
     fontFamily: 'NanumSquareNeo',
     fontWeight: FontWeight.w900,
+    fontVariations: [FontVariation('wght', 900)],
     fontSize: 25,
     height: 1.3,
     letterSpacing: 0.4,
@@ -47,6 +49,7 @@ class AppTextStyles {
   static const TextStyle title2 = TextStyle(
     fontFamily: 'NanumSquareNeo',
     fontWeight: FontWeight.w800,
+    fontVariations: [FontVariation('wght', 800)],
     fontSize: 22,
     height: 1.3,
     letterSpacing: 0.4,
@@ -60,6 +63,7 @@ class AppTextStyles {
   static const TextStyle bodyBold = TextStyle(
     fontFamily: 'NanumSquareNeo',
     fontWeight: FontWeight.w700,
+    fontVariations: [FontVariation('wght', 700)],
     fontSize: 20,
     height: 1.4,
     letterSpacing: 0.4,
@@ -70,6 +74,7 @@ class AppTextStyles {
   static const TextStyle bodyRegular = TextStyle(
     fontFamily: 'NanumSquareNeo',
     fontWeight: FontWeight.w500,
+    fontVariations: [FontVariation('wght', 500)],
     fontSize: 20,
     height: 1.4,
     letterSpacing: 0.4,
@@ -83,6 +88,7 @@ class AppTextStyles {
   static const TextStyle labelBold = TextStyle(
     fontFamily: 'NanumSquareNeo',
     fontWeight: FontWeight.w700,
+    fontVariations: [FontVariation('wght', 700)],
     fontSize: 18,
     height: 1.4,
     letterSpacing: 0.4,
@@ -93,6 +99,7 @@ class AppTextStyles {
   static const TextStyle labelRegular = TextStyle(
     fontFamily: 'NanumSquareNeo',
     fontWeight: FontWeight.w500,
+    fontVariations: [FontVariation('wght', 500)],
     fontSize: 18,
     height: 1.4,
     letterSpacing: 0.4,
