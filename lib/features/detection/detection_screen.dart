@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:safepath/common/widgets/title_bar_widget.dart';
 import 'package:safepath/features/detection/detection_active_view.dart';
 import 'package:safepath/features/detection/detection_idle_view.dart';
@@ -21,6 +22,11 @@ class _DetectionScreenState extends State<DetectionScreen> {
 
   Future<void> _startDetection() async {
     await CameraService().start(CameraMode.detection);
+    // 가로 모드로 전환
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     setState(() {
       _isDetecting = true;
       _detectedCount = 0;
@@ -30,6 +36,10 @@ class _DetectionScreenState extends State<DetectionScreen> {
 
   Future<void> _stopDetection() async {
     await CameraService().stop();
+    // 세로 모드로 복원
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     setState(() {
       _isDetecting = false;
     });
@@ -41,7 +51,10 @@ class _DetectionScreenState extends State<DetectionScreen> {
     return PopScope(
       canPop: !_isDetecting,
       child: Scaffold(
-        appBar: const CustomTitleBar(title: '실외 장애물 탐지'),
+        // active 상태일 때 AppBar 없음
+        appBar: _isDetecting
+            ? null
+            : const CustomTitleBar(title: '실외 장애물 탐지'),
         body: SafeArea(
           child: _isDetecting
               ? DetectionActiveView(
