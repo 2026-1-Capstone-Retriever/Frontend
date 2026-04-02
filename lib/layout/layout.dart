@@ -17,26 +17,29 @@ class _MainLayoutState extends State<MainLayout> {
   int _currentIndex = 0;
   bool _isDetecting = false;
 
+  final _settingsScrollController = ScrollController();
+
   late final List<Widget> _pages = [
     HomeScreen(onTabChange: _onTap),
     DetectionScreen(onDetectingChanged: (v) => setState(() => _isDetecting = v)),
     const NavigationScreen(),
-    const SettingsScreen(),
+    SettingsScreen(scrollController: _settingsScrollController),
   ];
 
+  @override
+  void dispose() {
+    _settingsScrollController.dispose();
+    super.dispose();
+  }
+
   void _onTap(int index) {
-    // // 현재 카메라가 필요한 탭에서 벗어나는 경우 카메라 stop
-    // if (_needsCamera(_currentIndex) && !_needsCamera(index)) {
-    //   CameraService().stop();
-    // }
+    // 설정 탭으로 진입할 때 스크롤 top으로 리셋
+    if (index == 3 && _settingsScrollController.hasClients) {
+      _settingsScrollController.jumpTo(0);
+    }
     setState(() {
       _currentIndex = index;
     });
-
-    // // 새 탭이 카메라 필요하면 start
-    // if (_needsCamera(index)) {
-    //   CameraService().start();
-    // }
   }
 
   bool _needsCamera(int index) {

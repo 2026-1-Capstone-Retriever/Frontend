@@ -10,7 +10,9 @@ import 'package:safepath/features/settings/settings_style_widget.dart';
 import 'package:safepath/routes/app_router.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+  final ScrollController? scrollController;
+
+  const SettingsScreen({super.key, this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +20,7 @@ class SettingsScreen extends StatelessWidget {
       appBar: const CustomTitleBar(title: '설정'),
       body: SafeArea(
         child: SingleChildScrollView(
+          controller: scrollController,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
