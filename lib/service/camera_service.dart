@@ -7,6 +7,19 @@ import 'package:http/http.dart' as http;
 /// 카메라 사용 모드
 enum CameraMode { detection, navigation }
 
+/// 디버그용 캡처 이벤트
+class CaptureEvent {
+  final DateTime time;
+  final bool success;
+  final int bytes;
+
+  const CaptureEvent({
+    required this.time,
+    required this.success,
+    required this.bytes,
+  });
+}
+
 /// =======================================================
 /// CameraService
 ///
@@ -31,10 +44,12 @@ class CameraService {
   CameraService._internal();
 
   // TODO: 백엔드 서버 URL 설정
-  static const String _detectionEndpoint = 'https://your-server.com/api/detection/frame';
-  static const String _navigationEndpoint = 'https://your-server.com/api/navigation/frame';
+  static const String _detectionEndpoint =
+      'https://your-server.com/api/detection/frame';
+  static const String _navigationEndpoint =
+      'https://your-server.com/api/navigation/frame';
 
-  /// 캡처 주기 (초)
+  /// 캡처 주기
   static const Duration _captureInterval = Duration(seconds: 1);
 
   CameraController? _controller;
@@ -42,8 +57,16 @@ class CameraService {
   CameraMode? _currentMode;
   bool _isRunning = false;
 
+  /// 디버그용 캡처 이벤트 스트림
+  final _debugCaptureController = StreamController<CaptureEvent>.broadcast();
+  Stream<CaptureEvent> get debugCaptureStream => _debugCaptureController.stream;
+
   bool get isRunning => _isRunning;
   CameraMode? get currentMode => _currentMode;
+
+  /// 디버그 전용 — CameraPreview 위젯에 전달용
+  /// Release 빌드에서는 kDebugMode 조건 안에서만 접근할 것
+  CameraController? get debugController => _controller;
 
   // ─── 시작 ─────────────────────────────────────────────────────────────────
 
@@ -59,7 +82,7 @@ class CameraService {
 
       _controller = CameraController(
         rear,
-        ResolutionPreset.medium, // 서버 전송용 — 고해상도 불필요
+        ResolutionPreset.medium,
         enableAudio: false,
         imageFormatGroup: ImageFormatGroup.jpeg,
       );
@@ -69,10 +92,9 @@ class CameraService {
       _isRunning = true;
       _currentMode = mode;
 
-      // 주기적 캡처 시작
-      _captureTimer = Timer.periodic(_captureInterval, (_) => _captureAndSend());
+      _captureTimer =
+          Timer.periodic(_captureInterval, (_) => _captureAndSend());
     } catch (e) {
-      // 카메라 권한 거부, 하드웨어 오류 등
       _isRunning = false;
       rethrow;
     }
@@ -101,13 +123,24 @@ class CameraService {
     try {
       final file = await _controller!.takePicture();
       final bytes = await file.readAsBytes();
-      await _sendFrame(bytes);
+      final success = await _sendFrame(bytes);
+
+      _debugCaptureController.add(CaptureEvent(
+        time: DateTime.now(),
+        success: success,
+        bytes: bytes.length,
+      ));
     } catch (_) {
-      // 전송 실패 시 다음 주기에 재시도 — 별도 처리 없음
+      _debugCaptureController.add(CaptureEvent(
+        time: DateTime.now(),
+        success: false,
+        bytes: 0,
+      ));
     }
   }
 
-  Future<void> _sendFrame(Uint8List bytes) async {
+  /// 전송 성공 여부 반환
+  Future<bool> _sendFrame(Uint8List bytes) async {
     final endpoint = _currentMode == CameraMode.detection
         ? _detectionEndpoint
         : _navigationEndpoint;
@@ -124,6 +157,7 @@ class CameraService {
     // TODO: 인증 헤더 추가 (Bearer token 등)
     // request.headers['Authorization'] = 'Bearer $token';
 
-    await request.send();
+    final response = await request.send();
+    return response.statusCode == 200;
   }
 }

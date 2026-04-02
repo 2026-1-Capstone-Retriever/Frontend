@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:safepath/common/theme/color_collection.dart';
 import 'package:safepath/common/theme/text_styles.dart';
+import 'package:safepath/common/widgets/camera_debug_overlay.dart';
 import 'package:safepath/features/detection/detection_button_widget.dart';
 import 'package:safepath/features/detection/obstacle_card_widget.dart';
 
@@ -47,9 +48,11 @@ class DetectionActiveView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-      child: Column(
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 탐지 중지 버튼
@@ -142,7 +145,10 @@ class DetectionActiveView extends StatelessWidget {
             ),
           ),
         ],
-      ),
+          ),
+        ),
+        const CameraDebugOverlay(),
+      ],
     );
   }
 }
