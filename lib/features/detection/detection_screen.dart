@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:safepath/common/widgets/title_bar_widget.dart';
 import 'package:safepath/features/detection/detection_active_view.dart';
 import 'package:safepath/features/detection/detection_idle_view.dart';
+import 'package:safepath/service/camera_service.dart';
 
 class DetectionScreen extends StatefulWidget {
   final ValueChanged<bool>? onDetectingChanged;
@@ -18,7 +19,8 @@ class _DetectionScreenState extends State<DetectionScreen> {
   // TODO: 실제 탐지 로직 연결 시 여기서 카메라/모델 제어
   int _detectedCount = 0;
 
-  void _startDetection() {
+  Future<void> _startDetection() async {
+    await CameraService().start(CameraMode.detection);
     setState(() {
       _isDetecting = true;
       _detectedCount = 0;
@@ -26,7 +28,8 @@ class _DetectionScreenState extends State<DetectionScreen> {
     widget.onDetectingChanged?.call(true);
   }
 
-  void _stopDetection() {
+  Future<void> _stopDetection() async {
+    await CameraService().stop();
     setState(() {
       _isDetecting = false;
     });
