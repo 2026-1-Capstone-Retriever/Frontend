@@ -4,7 +4,6 @@ import 'package:safepath/features/detection/detection_screen.dart';
 import 'package:safepath/features/home/home_screen.dart';
 import 'package:safepath/features/navigation/navigation_screen.dart';
 import 'package:safepath/features/settings/settings_screen.dart';
-import 'package:safepath/service/camera_service.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -42,11 +41,6 @@ class _MainLayoutState extends State<MainLayout> {
     });
   }
 
-  bool _needsCamera(int index) {
-    // DetectionScreen = 1, NavigationScreen = 2
-    return index == 1 || index == 2;
-  }
-
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -60,7 +54,7 @@ class _MainLayoutState extends State<MainLayout> {
       },
       child: Scaffold(
         body: IndexedStack(index: _currentIndex, children: _pages),
-      bottomNavigationBar: Container(
+      bottomNavigationBar: _isDetecting ? null : Container(
         decoration: const BoxDecoration(
           border: Border(
             top: BorderSide(color: ColorCollection.point, width: 1.0),
