@@ -51,100 +51,113 @@ class DetectionActiveView extends StatelessWidget {
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 탐지 중지 버튼
-          Center(
-            child: DetectionButton(isDetecting: true, onTap: onStop, size: 180),
-          ),
-          const SizedBox(height: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Row(
+            children: [
+              // ── 좌측: 버튼 + 상태 + 탐지 수 ──────────────────────────────
+              SizedBox(
+                width: 220,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    DetectionButton(isDetecting: true, onTap: onStop, size: 180),
+                    const SizedBox(height: 16),
 
-          // 실시간 감지 활성화 상태 표시
-          Semantics(
-            label: '실시간 감지 활성화 중',
-            excludeSemantics: true,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 10,
-                  height: 10,
-                  decoration: const BoxDecoration(
-                    color: ColorCollection.green,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '실시간 감지 활성화',
-                  style: AppTextStyles.bodyBold.copyWith(
-                    color: ColorCollection.point,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // 탐지된 물체 수 박스
-          Semantics(
-            label: '탐지된 물체 $detectedCount개',
-            excludeSemantics: true,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              decoration: BoxDecoration(
-                color: ColorCollection.point.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: ColorCollection.main, width: 3),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    '$detectedCount',
-                    style: AppTextStyles.title1.copyWith(
-                      color: ColorCollection.main,
+                    // 실시간 감지 활성화
+                    Semantics(
+                      label: '실시간 감지 활성화 중',
+                      excludeSemantics: true,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 10,
+                            height: 10,
+                            decoration: const BoxDecoration(
+                              color: ColorCollection.green,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '실시간 감지 활성화',
+                            style: AppTextStyles.labelBold.copyWith(
+                              color: ColorCollection.point,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '탐지된 물체',
-                    style: AppTextStyles.bodyRegular.copyWith(
-                      color: ColorCollection.point,
+                    const SizedBox(height: 12),
+
+                    // 탐지된 물체 수 박스
+                    Semantics(
+                      label: '탐지된 물체 $detectedCount개',
+                      excludeSemantics: true,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        decoration: BoxDecoration(
+                          color: ColorCollection.point.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: ColorCollection.main, width: 3),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              '$detectedCount',
+                              style: AppTextStyles.title1.copyWith(
+                                color: ColorCollection.main,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              '탐지된 물체',
+                              style: AppTextStyles.labelRegular.copyWith(
+                                color: ColorCollection.point,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ),
-          const SizedBox(height: 24),
+              const SizedBox(width: 20),
 
-          // 감지된 장애물 섹션 (이 영역만 스크롤)
-          Text(
-            '감지된 장애물',
-            style: AppTextStyles.title2.copyWith(color: ColorCollection.point),
-          ),
-          const SizedBox(height: 16),
-
-          Expanded(
-            child: ListView.separated(
-              itemCount: _dummyObstacles.length, // TODO: 실제 탐지 결과로 교체
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
-              itemBuilder: (_, index) {
-                final o = _dummyObstacles[index];
-                return ObstacleCard(
-                  name: o.name,
-                  distance: o.distance,
-                  position: o.position,
-                  vibration: o.vibration,
-                  proximity: o.proximity,
-                );
-              },
-            ),
-          ),
-        ],
+              // ── 우측: 장애물 목록 ─────────────────────────────────────────
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '감지된 장애물',
+                      style: AppTextStyles.title2.copyWith(
+                        color: ColorCollection.point,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Expanded(
+                      child: ListView.separated(
+                        itemCount: _dummyObstacles.length, // TODO: 실제 탐지 결과로 교체
+                        separatorBuilder: (_, __) => const SizedBox(height: 10),
+                        itemBuilder: (_, index) {
+                          final o = _dummyObstacles[index];
+                          return ObstacleCard(
+                            name: o.name,
+                            distance: o.distance,
+                            position: o.position,
+                            vibration: o.vibration,
+                            proximity: o.proximity,
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
         const CameraDebugOverlay(),
