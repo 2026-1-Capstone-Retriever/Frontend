@@ -25,45 +25,47 @@ class AuthService {
   // ─── 카카오 로그인 ────────────────────────────────────────────────────────
 
   /// 카카오 로그인 후 BE JWT 저장
-  /// 성공 시 true, 실패 시 예외 throw
-  Future<bool> signInWithKakao() async {
-    String accessToken;
+  /// 반환값: AuthResult (isNewUser 포함)
+  Future<AuthResult> signInWithKakao() async {
+    const kakaoNativeAppKey = String.fromEnvironment('KAKAO_NATIVE_APP_KEY');
+    final redirectUri = 'kakao$kakaoNativeAppKey://oauth';
+
+    String authCode;
     try {
       final kakaoTalkInstalled = await isKakaoTalkInstalled();
       debugPrint('🟡 [Auth] 카카오톡 설치 여부: $kakaoTalkInstalled');
 
       if (kakaoTalkInstalled) {
-        final token = await UserApi.instance.loginWithKakaoTalk();
-        accessToken = token.accessToken;
-        debugPrint('🟡 [Auth] 카카오톡 앱으로 로그인 성공');
+        authCode = await AuthCodeClient.instance.authorizeWithTalk(redirectUri: redirectUri);
+        debugPrint('🟡 [Auth] 카카오톡 앱으로 인가 코드 발급 성공');
       } else {
-        final token = await UserApi.instance.loginWithKakaoAccount();
-        accessToken = token.accessToken;
-        debugPrint('🟡 [Auth] 카카오 계정(웹)으로 로그인 성공');
+        authCode = await AuthCodeClient.instance.authorize(redirectUri: redirectUri);
+        debugPrint('🟡 [Auth] 카카오 계정(웹)으로 인가 코드 발급 성공');
       }
     } catch (e) {
       debugPrint('🔴 [Auth] 카카오 로그인 실패: $e');
       throw AuthException('카카오 로그인 실패: $e');
     }
 
-    return await _fetchTokenFromServer(accessToken);
+    return await _fetchTokenFromServer(authCode);
   }
 
-  Future<bool> _fetchTokenFromServer(String accessToken) async {
+  Future<AuthResult> _fetchTokenFromServer(String accessToken) async {
     final uri = Uri.parse('$_baseUrl/api/auth/kakao/callback?code=$accessToken');
     debugPrint('🟡 [Auth] BE 요청: GET $uri');
 
     final response = await http.get(uri);
     debugPrint('🟡 [Auth] BE 응답: ${response.statusCode} / ${response.body}');
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final body = jsonDecode(response.body);
       await TokenStorage().saveTokens(
         accessToken: body['accessToken'] as String,
         refreshToken: body['refreshToken'] as String,
       );
-      debugPrint('✅ [Auth] 토큰 저장 완료');
-      return true;
+      final isNewUser = response.statusCode == 201;
+      debugPrint('✅ [Auth] 토큰 저장 완료 / 신규 유저: $isNewUser');
+      return AuthResult(isNewUser: isNewUser);
     }
 
     throw AuthException('서버 인증 실패: ${response.statusCode}');
@@ -111,6 +113,13 @@ class AuthService {
     await TokenStorage().clear();
     await UserApi.instance.logout();
   }
+}
+
+/// 로그인 결과
+class AuthResult {
+  /// true = 신규 유저 (회원가입), false = 기존 유저 (로그인)
+  final bool isNewUser;
+  const AuthResult({required this.isNewUser});
 }
 
 class AuthException implements Exception {

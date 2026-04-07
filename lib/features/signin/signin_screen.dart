@@ -1,18 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:safepath/common/theme/text_styles.dart';
-
-import 'package:safepath/routes/app_router.dart';
-import 'package:safepath/common/widgets/logo_widget.dart';
-import 'package:safepath/common/widgets/button_widget.dart';
 import 'package:safepath/common/theme/color_collection.dart';
-// import 'package:safepath/service/auth_service.dart';
+import 'package:safepath/common/theme/text_styles.dart';
+import 'package:safepath/common/widgets/button_widget.dart';
+import 'package:safepath/common/widgets/logo_widget.dart';
+import 'package:safepath/routes/app_router.dart';
+import 'package:safepath/service/auth_service.dart';
 
-class SignInScreen extends StatelessWidget {
+class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
-  // TODO: 카카오 로그인 구현 완료 후 실제 로그인 로직으로 교체
-  void _onKakaoLogin(BuildContext context) {
-    Navigator.pushReplacementNamed(context, AppRouter.home);
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  bool _isLoading = false;
+
+  Future<void> _onKakaoLogin() async {
+    setState(() => _isLoading = true);
+    try {
+      await AuthService().signInWithKakao();
+      if (!mounted) return;
+
+      // 신규/기존 유저 모두 홈으로 (카카오 회원가입은 SDK가 자동 처리)
+      Navigator.pushReplacementNamed(context, AppRouter.home);
+    } on AuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          backgroundColor: ColorCollection.red,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('로그인에 실패했습니다. 다시 시도해주세요.'),
+          backgroundColor: ColorCollection.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -21,13 +51,13 @@ class SignInScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: 33),
+            const SizedBox(height: 33),
             const Center(child: LogoWidget()),
             const SizedBox(height: 63),
             CustomButton(
               width: 344,
               height: 218,
-              title: '시작하기',
+              title: _isLoading ? '로그인 중...' : '시작하기',
               titleSubtitleSpacing: 17,
               subtitle: '카카오계정으로 시작',
               backgroundColor: ColorCollection.main,
@@ -36,9 +66,9 @@ class SignInScreen extends StatelessWidget {
               subtitleColor: ColorCollection.background,
               subtitleStyle: AppTextStyles.bodyBold,
               borderColor: ColorCollection.main,
-              onTap: () => _onKakaoLogin(context),
+              onTap: _isLoading ? null : _onKakaoLogin,
             ),
-            SizedBox(height: 28),
+            const SizedBox(height: 28),
             CustomButton(
               width: 344,
               height: 218,
