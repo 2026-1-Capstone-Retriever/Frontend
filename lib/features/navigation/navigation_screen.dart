@@ -56,9 +56,25 @@ class _NavigationScreenState extends State<NavigationScreen> {
       await speech.stop();
       return;
     }
+
+    bool available = await speech.initialize(
+      onStatus: (status) => print('status: $status'),
+      onError: (error) => print('error: $error'),
+    );
+
+    if (!available) {
+      print("STT 사용 불가");
+      return;
+    }
+
     speech.listen(
-      pauseFor: const Duration(seconds: 2), // 2초 동안 말이 없으면 자동으로 듣기 종료
-      listenFor: const Duration(seconds: 10), // 최대 듣기 시간
+      listenOptions: stt.SpeechListenOptions(
+        listenMode: stt.ListenMode.dictation, // 문장 단위 인식
+        partialResults: true, // 중간 결과 허용
+        cancelOnError: true,
+      ),
+      pauseFor: const Duration(seconds: 4), // 4초 동안 말이 없으면 자동으로 듣기 종료
+      listenFor: const Duration(seconds: 20), // 최대 듣기 시간
       localeId: "ko_KR",
       onResult: (result) {
         if (result.recognizedWords.isNotEmpty) {
