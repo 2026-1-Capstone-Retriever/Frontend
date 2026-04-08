@@ -32,7 +32,7 @@ class _CameraDebugOverlayState extends State<CameraDebugOverlay> {
   @override
   void initState() {
     super.initState();
-    _sub = CameraService().debugCaptureStream.listen((event) {
+    _sub = CameraService().captureEventStream.listen((event) {
       if (mounted) setState(() => _lastEvent = event);
     });
   }
