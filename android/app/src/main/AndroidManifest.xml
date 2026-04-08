@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -38,11 +39,13 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <!-- 카카오 로그인: 웹/계정 로그인 후 앱으로 돌아오는 리다이렉트 처리 -->
+        <!-- kakao_flutter_sdk_auth(singleTop)와 kakao_flutter_sdk_common(singleTask) 충돌로
+             tools:replace로 singleTask 명시 -->
         <activity
             android:name="com.kakao.sdk.flutter.AuthCodeCustomTabsActivity"
             android:exported="true"
-            android:launchMode="singleTop">
+            android:launchMode="singleTask"
+            tools:replace="android:launchMode">
             <intent-filter android:label="flutter_web_auth">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -52,6 +55,7 @@
                     android:scheme="kakao${kakaoNativeAppKey}" />
             </intent-filter>
         </activity>
+
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
