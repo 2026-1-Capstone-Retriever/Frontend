@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:safepath/common/theme/color_collection.dart';
 import 'package:safepath/common/theme/text_styles.dart';
+import 'package:safepath/common/theme/color_collection.dart';
 import 'package:safepath/common/widgets/text_input_bar.dart';
 import 'package:safepath/features/navigation/current_place_widget.dart';
 
