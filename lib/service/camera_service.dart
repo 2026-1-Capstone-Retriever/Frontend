@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:safepath/service/token_storage.dart';
@@ -42,6 +43,9 @@ class CameraService {
 
   static const String _baseUrl = String.fromEnvironment('BASE_URL');
 
+  /// true → 카메라 대신 테스트 이미지(assets/images/test_detection.jpg)를 주기 전송
+  static const bool useTestImage = false;
+
   /// 캡처 전송 주기
   static const Duration _captureInterval = Duration(milliseconds: 500);
 
@@ -62,37 +66,42 @@ class CameraService {
   CameraMode? get currentMode => _currentMode;
 
   /// 디버그 전용 — CameraPreview 위젯에 넘길 때 사용
-  /// kDebugMode 조건 안에서만 접근할 것
+  /// useTestImage 조건 안에서만 접근할 것
   CameraController? get debugController => _controller;
 
   // ─── 시작 ─────────────────────────────────────────────────────────────────
 
   /// 카메라를 초기화하고 주기적 캡처를 시작한다.
   /// 이미 실행 중이면 무시한다.
+  /// 디버그 모드에서는 카메라 초기화를 건너뛰고 테스트 이미지를 주기적으로 전송한다.
   Future<void> start(CameraMode mode) async {
     if (_isRunning) return;
 
     try {
-      // 사용 가능한 카메라 목록에서 후면 카메라를 선택
-      final cameras = await availableCameras();
-      final rear = cameras.firstWhere(
-        (c) => c.lensDirection == CameraLensDirection.back,
-        orElse: () => cameras.first,
-      );
+      if (!useTestImage) {
+        // 사용 가능한 카메라 목록에서 후면 카메라를 선택
+        final cameras = await availableCameras();
+        final rear = cameras.firstWhere(
+          (c) => c.lensDirection == CameraLensDirection.back,
+          orElse: () => cameras.first,
+        );
 
-      _controller = CameraController(
-        rear,
-        ResolutionPreset.medium,
-        enableAudio: false,
-        imageFormatGroup: ImageFormatGroup.jpeg,
-      );
+        _controller = CameraController(
+          rear,
+          ResolutionPreset.medium,
+          enableAudio: false,
+          imageFormatGroup: ImageFormatGroup.jpeg,
+        );
 
-      await _controller!.initialize();
+        await _controller!.initialize();
 
-      // initialize() 완료 전에 stop()이 호출된 경우 중단
-      if (_controller == null) return;
+        // initialize() 완료 전에 stop()이 호출된 경우 중단
+        if (_controller == null) return;
 
-      debugPrint('🟡 [Camera] 카메라 초기화 완료 / 모드: $mode');
+        debugPrint('🟡 [Camera] 카메라 초기화 완료 / 모드: $mode');
+      } else {
+        debugPrint('🟣 [Camera][DBG] 디버그 모드: 카메라 생략, 테스트 이미지 주기 전송 시작');
+      }
 
       _isRunning = true;
       _currentMode = mode;
@@ -122,31 +131,46 @@ class CameraService {
     _captureTimer?.cancel();
     _captureTimer = null;
 
-    final controller = _controller;
-    _controller = null;
-    await controller?.dispose();
+    if (!useTestImage) {
+      final controller = _controller;
+      _controller = null;
+      await controller?.dispose();
+    }
 
     debugPrint('🟡 [Camera] 카메라 정지 완료');
   }
 
   // ─── 캡처 & 전송 ──────────────────────────────────────────────────────────
 
-  /// 사진을 찍고 서버로 전송한다.
+  static const _debugAssetPath = 'assets/images/test_detection.jpg';
+
+  /// 사진을 찍고(또는 디버그 테스트 이미지를 로드하고) 서버로 전송한다.
   /// 성공/실패 결과를 captureEventStream으로 내보낸다.
   Future<void> _captureAndSend() async {
     if (!_isRunning || _isSending) return;
-    if (_controller == null || !_controller!.value.isInitialized) return;
 
     _isSending = true;
     try {
-      final file = await _controller!.takePicture();
+      final Uint8List bytes;
 
-      // takePicture 완료 후 이미 stop()이 호출됐으면 중단
-      if (!_isRunning) return;
+      if (useTestImage) {
+        // 디버그 모드: 카메라 대신 번들 테스트 이미지를 사용
+        final byteData = await rootBundle.load(_debugAssetPath);
+        bytes = byteData.buffer.asUint8List();
+        debugPrint(
+          '🟣 [Camera][DBG] 테스트 이미지 로드 완료 (${bytes.length} bytes) → 전송 시작',
+        );
+      } else {
+        if (_controller == null || !_controller!.value.isInitialized) return;
+        final file = await _controller!.takePicture();
 
-      final bytes = await file.readAsBytes();
+        // takePicture 완료 후 이미 stop()이 호출됐으면 중단
+        if (!_isRunning) return;
 
-      debugPrint('🟡 [Camera] 캡처 완료 (${bytes.length} bytes) → 전송 시작');
+        bytes = await file.readAsBytes();
+        debugPrint('🟡 [Camera] 캡처 완료 (${bytes.length} bytes) → 전송 시작');
+      }
+
       final success = await _sendFrame(bytes);
 
       if (!_captureEventController.isClosed) {
