@@ -32,6 +32,7 @@ class TextInputBar extends StatelessWidget {
               color: ColorCollection.point,
             ),
             onSubmitted: onSubmitted,
+            onChanged: (_) {},
             decoration: InputDecoration(
               prefixIcon: showSearchIcon
                   ? const Icon(Icons.search, color: ColorCollection.main)
@@ -45,9 +46,11 @@ class TextInputBar extends StatelessWidget {
                   return IconButton(
                     icon: const Icon(Icons.close, color: ColorCollection.main),
                     onPressed: () {
-                      controller.clear();
+                      // 부모에서 상태 + controller 모두 관리하도록 위임
                       if (onClear != null) {
                         onClear!();
+                      } else {
+                        controller.clear(); // fallback
                       }
                     },
                   );
@@ -62,6 +65,7 @@ class TextInputBar extends StatelessWidget {
               fillColor: ColorCollection.background,
               hintStyle: AppTextStyles.labelRegular.copyWith(
                 color: ColorCollection.point,
+                fontSize: 15,
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
