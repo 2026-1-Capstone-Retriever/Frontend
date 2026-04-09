@@ -51,6 +51,7 @@ class CategoryItem extends StatelessWidget {
               textAlign: TextAlign.center,
               style: AppTextStyles.labelBold.copyWith(
                 color: ColorCollection.point,
+                fontSize: 16,
               ),
             ),
           ],
