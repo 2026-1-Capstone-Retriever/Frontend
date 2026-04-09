@@ -10,21 +10,22 @@ enum ObstacleProximity { near, mid, far }
 ///
 /// 사용 예시:
 /// ObstacleCard(
-///   name: '가로수',
-///   distance: '멂',
-///   position: '오른쪽',
-///   vibration: '약한 진동 (1회)',
-///   proximity: ObstacleProximity.far,
+///   name: '오토바이',
+///   distance: '가까움',
+///   position: '1시 방향',
+///   vibration: '강한 진동 (연이은 진동)',
+///   proximity: ObstacleProximity.near,
+///   guideText: '1시 방향에 오토바이가 있습니다. 중앙을 유지하며 천천히 직진하세요.',
 /// )
-///
-/// 추후 AI 전달 값 보고 distance, position 등 그룹화하기
-///
 class ObstacleCard extends StatelessWidget {
   final String name;
   final String distance;
   final String position;
   final String vibration;
   final ObstacleProximity proximity;
+
+  /// AI 안내 문구 — WS 응답의 guideText
+  final String guideText;
 
   const ObstacleCard({
     super.key,
@@ -33,6 +34,7 @@ class ObstacleCard extends StatelessWidget {
     required this.position,
     required this.vibration,
     required this.proximity,
+    required this.guideText,
   });
 
   @override
