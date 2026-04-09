@@ -43,7 +43,7 @@ class CameraService {
   static const String _baseUrl = String.fromEnvironment('BASE_URL');
 
   /// 캡처 전송 주기
-  static const Duration _captureInterval = Duration(seconds: 1);
+  static const Duration _captureInterval = Duration(milliseconds: 500);
 
   CameraController? _controller;
   Timer? _captureTimer;
@@ -91,7 +91,10 @@ class CameraService {
       _currentMode = mode;
 
       // 1초마다 _captureAndSend 실행
-      _captureTimer = Timer.periodic(_captureInterval, (_) => _captureAndSend());
+      _captureTimer = Timer.periodic(
+        _captureInterval,
+        (_) => _captureAndSend(),
+      );
     } catch (e) {
       _isRunning = false;
       debugPrint('🔴 [Camera] 카메라 시작 실패: $e');
@@ -130,18 +133,18 @@ class CameraService {
       debugPrint('🟡 [Camera] 캡처 완료 (${bytes.length} bytes) → 전송 시작');
       final success = await _sendFrame(bytes);
 
-      _captureEventController.add(CaptureEvent(
-        time: DateTime.now(),
-        success: success,
-        bytes: bytes.length,
-      ));
+      _captureEventController.add(
+        CaptureEvent(
+          time: DateTime.now(),
+          success: success,
+          bytes: bytes.length,
+        ),
+      );
     } catch (e) {
       debugPrint('🔴 [Camera] 캡처 실패: $e');
-      _captureEventController.add(CaptureEvent(
-        time: DateTime.now(),
-        success: false,
-        bytes: 0,
-      ));
+      _captureEventController.add(
+        CaptureEvent(time: DateTime.now(), success: false, bytes: 0),
+      );
     }
   }
 
@@ -179,7 +182,9 @@ class CameraService {
     final streamedResponse = await request.send();
     final responseBody = await streamedResponse.stream.bytesToString();
 
-    debugPrint('🟡 [Camera] BE 응답: ${streamedResponse.statusCode} / $responseBody');
+    debugPrint(
+      '🟡 [Camera] BE 응답: ${streamedResponse.statusCode} / $responseBody',
+    );
 
     if (streamedResponse.statusCode == 200) {
       final json = jsonDecode(responseBody) as Map<String, dynamic>;
@@ -187,7 +192,9 @@ class CameraService {
       if (!success) {
         // 서버가 200을 줬지만 success=false인 경우 (에러 내용 출력)
         final error = json['error'] as Map<String, dynamic>?;
-        debugPrint('🔴 [Camera] 서버 오류: ${error?['code']} / ${error?['message']}');
+        debugPrint(
+          '🔴 [Camera] 서버 오류: ${error?['code']} / ${error?['message']}',
+        );
       }
       return success;
     }
