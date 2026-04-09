@@ -44,7 +44,11 @@ class DetectionActiveView extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    DetectionButton(isDetecting: true, onTap: onStop, size: 180),
+                    DetectionButton(
+                      isDetecting: true,
+                      onTap: onStop,
+                      size: 180,
+                    ),
                     const SizedBox(height: 16),
 
                     // 실시간 감지 활성화
@@ -84,7 +88,10 @@ class DetectionActiveView extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: ColorCollection.point.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: ColorCollection.main, width: 3),
+                          border: Border.all(
+                            color: ColorCollection.main,
+                            width: 3,
+                          ),
                         ),
                         child: Column(
                           children: [
@@ -129,7 +136,8 @@ class DetectionActiveView extends StatelessWidget {
                           ? const _NoObstaclePlaceholder()
                           : ListView.separated(
                               itemCount: obstacles.length,
-                              separatorBuilder: (_, __) => const SizedBox(height: 10),
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(height: 10),
                               itemBuilder: (_, index) {
                                 final e = obstacles[index];
                                 return ObstacleCard(
@@ -175,8 +183,11 @@ class _NoObstaclePlaceholder extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.check_circle_outline,
-              color: ColorCollection.main, size: 36),
+          const Icon(
+            Icons.check_circle_outline,
+            color: ColorCollection.main,
+            size: 36,
+          ),
           const SizedBox(height: 12),
           Text(
             '주변에 장애물이 없습니다.',

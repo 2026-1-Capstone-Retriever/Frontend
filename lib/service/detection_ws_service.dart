@@ -110,10 +110,7 @@ class DetectionWsService {
     debugPrint('🟢 [WS] STOMP 연결 완료 → $_subscribeDest 구독');
     _onConnectedCallback?.call();
 
-    _client!.subscribe(
-      destination: _subscribeDest,
-      callback: _onMessage,
-    );
+    _client!.subscribe(destination: _subscribeDest, callback: _onMessage);
   }
 
   void _onMessage(StompFrame frame) {

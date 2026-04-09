@@ -43,8 +43,8 @@ class ObstacleCard extends StatelessWidget {
 
     final semanticsLabel =
         '$name. ${_proximityLabel(proximity)}. '
-        '거리 : $distance. 위치 : $position. 진동 : $vibration. '
-        '${guideText.isNotEmpty ? guideText : (isNear ? '즉시 주의 필요 - 매우 가까운 장애물.' : '')}';
+        '거리 : $distance. 위치 : $position. 진동 : $vibration.'
+        '${isNear ? ' 즉시 주의 필요 - 매우 가까운 장애물.' : ''}';
 
     return Semantics(
       label: semanticsLabel,

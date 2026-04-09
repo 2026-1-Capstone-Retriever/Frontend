@@ -15,7 +15,7 @@ class DetectionEvent {
   final String guideText;
   final String primaryObjectClass;
   final String clockDirection;
-  final String distance;   // "near" | "mid" | "far"
+  final String distance; // "near" | "mid" | "far"
   final String alertLevel; // "high" | "medium" | "low"
 
   const DetectionEvent({
@@ -39,15 +39,15 @@ class DetectionEvent {
   /// distance 문자열 → ObstacleProximity
   ObstacleProximity get proximity => switch (distance) {
     'near' => ObstacleProximity.near,
-    'mid'  => ObstacleProximity.mid,
-    _      => ObstacleProximity.far,
+    'mid' => ObstacleProximity.mid,
+    _ => ObstacleProximity.far,
   };
 
   /// distance → 한국어 표시
   String get distanceLabel => switch (distance) {
     'near' => '가까움',
-    'mid'  => '중간',
-    _      => '멂',
+    'mid' => '중간',
+    _ => '멂',
   };
 
   /// clockDirection → "N시 방향" 표시
@@ -55,34 +55,35 @@ class DetectionEvent {
 
   /// alertLevel → 진동 피드백 설명
   String get vibrationLabel => switch (alertLevel) {
-    'high'   => '강한 진동 (연이은 진동)',
+    'high' => '강한 진동 (연이은 진동)',
     'medium' => '중간 진동 (2회)',
-    _        => '약한 진동 (1회)',
+    _ => '약한 진동 (1회)',
   };
 
   /// primaryObjectClass(영문) → 한국어 이름
-  String get objectName => _objectClassKo[primaryObjectClass] ?? primaryObjectClass;
+  String get objectName =>
+      _objectClassKo[primaryObjectClass] ?? primaryObjectClass;
 
   static const Map<String, String> _objectClassKo = {
-    'motorcycle':    '오토바이',
-    'bicycle':       '자전거',
-    'person':        '사람',
-    'car':           '자동차',
-    'truck':         '트럭',
-    'bus':           '버스',
+    'motorcycle': '오토바이',
+    'bicycle': '자전거',
+    'person': '사람',
+    'car': '자동차',
+    'truck': '트럭',
+    'bus': '버스',
     'traffic light': '신호등',
-    'fire hydrant':  '소화전',
-    'stop sign':     '정지 표지판',
-    'bench':         '벤치',
-    'dog':           '개',
-    'cat':           '고양이',
-    'backpack':      '가방',
-    'umbrella':      '우산',
-    'handbag':       '핸드백',
-    'suitcase':      '여행가방',
-    'chair':         '의자',
-    'potted plant':  '화분',
-    'tv':            'TV',
-    'laptop':        '노트북',
+    'fire hydrant': '소화전',
+    'stop sign': '정지 표지판',
+    'bench': '벤치',
+    'dog': '개',
+    'cat': '고양이',
+    'backpack': '가방',
+    'umbrella': '우산',
+    'handbag': '핸드백',
+    'suitcase': '여행가방',
+    'chair': '의자',
+    'potted plant': '화분',
+    'tv': 'TV',
+    'laptop': '노트북',
   };
 }
