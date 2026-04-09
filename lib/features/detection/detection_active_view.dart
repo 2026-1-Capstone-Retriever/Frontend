@@ -7,43 +7,27 @@ import 'package:safepath/common/theme/text_styles.dart';
 import 'package:safepath/common/widgets/camera_debug_overlay.dart';
 import 'package:safepath/features/detection/detection_button_widget.dart';
 import 'package:safepath/features/detection/obstacle_card_widget.dart';
-
-// TODO: 실제 AI 탐지 결과 연결 시 더미 데이터 제거
-const _dummyObstacles = [
-  (
-    name: '자전거',
-    distance: '가까움',
-    position: '정면',
-    vibration: '강한 진동 (연이은 진동)',
-    proximity: ObstacleProximity.near,
-  ),
-  (
-    name: '전봇대',
-    distance: '중간',
-    position: '왼쪽',
-    vibration: '중간 진동 (2회)',
-    proximity: ObstacleProximity.mid,
-  ),
-  (
-    name: '가로수',
-    distance: '멂',
-    position: '오른쪽',
-    vibration: '약한 진동 (1회)',
-    proximity: ObstacleProximity.far,
-  ),
-];
+import 'package:safepath/model/detection_event.dart';
 
 /// 탐지 진행 화면 (탐지 중)
 class DetectionActiveView extends StatelessWidget {
   final VoidCallback onStop;
 
-  /// 탐지된 물체 총 수
+  /// 탐지된 물체 총 수 (WS 이벤트 수신 횟수)
   final int detectedCount;
+
+  /// 최신 탐지 이벤트 목록 (최근 순, DetectionScreen에서 관리)
+  final List<DetectionEvent> obstacles;
+
+  /// WS STOMP 연결 완료 여부
+  final bool wsConnected;
 
   const DetectionActiveView({
     super.key,
     required this.onStop,
     required this.detectedCount,
+    required this.obstacles,
+    required this.wsConnected,
   });
 
   @override
@@ -139,20 +123,25 @@ class DetectionActiveView extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Expanded(
-                      child: ListView.separated(
-                        itemCount: _dummyObstacles.length, // TODO: 실제 탐지 결과로 교체
-                        separatorBuilder: (_, __) => const SizedBox(height: 10),
-                        itemBuilder: (_, index) {
-                          final o = _dummyObstacles[index];
-                          return ObstacleCard(
-                            name: o.name,
-                            distance: o.distance,
-                            position: o.position,
-                            vibration: o.vibration,
-                            proximity: o.proximity,
-                          );
-                        },
-                      ),
+                      child: !wsConnected
+                          ? const _ConnectingPlaceholder()
+                          : obstacles.isEmpty
+                          ? const _NoObstaclePlaceholder()
+                          : ListView.separated(
+                              itemCount: obstacles.length,
+                              separatorBuilder: (_, __) => const SizedBox(height: 10),
+                              itemBuilder: (_, index) {
+                                final e = obstacles[index];
+                                return ObstacleCard(
+                                  name: e.objectName,
+                                  distance: e.distanceLabel,
+                                  position: e.positionLabel,
+                                  vibration: e.vibrationLabel,
+                                  proximity: e.proximity,
+                                  guideText: e.guideText,
+                                );
+                              },
+                            ),
                     ),
                   ],
                 ),
@@ -162,6 +151,41 @@ class DetectionActiveView extends StatelessWidget {
         ),
         const CameraDebugOverlay(),
       ],
+    );
+  }
+}
+
+// ─── 연결 중 플레이스홀더 (WS 미연결 상태) ────────────────────────────────────
+
+class _ConnectingPlaceholder extends StatelessWidget {
+  const _ConnectingPlaceholder();
+
+  @override
+  Widget build(BuildContext context) => _LoadingIndicator();
+}
+
+// ─── 장애물 없음 플레이스홀더 (WS 연결됨, 탐지 없음) ──────────────────────────
+
+class _NoObstaclePlaceholder extends StatelessWidget {
+  const _NoObstaclePlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.check_circle_outline,
+              color: ColorCollection.main, size: 36),
+          const SizedBox(height: 12),
+          Text(
+            '주변에 장애물이 없습니다.',
+            style: AppTextStyles.labelRegular.copyWith(
+              color: ColorCollection.point,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

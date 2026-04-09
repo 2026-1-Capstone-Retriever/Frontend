@@ -50,6 +50,9 @@ class CameraService {
   CameraMode? _currentMode;
   bool _isRunning = false;
 
+  /// 이전 캡처가 아직 진행 중일 때 중복 실행 방지
+  bool _isSending = false;
+
   /// 캡처 결과를 UI에 실시간으로 알려주는 스트림
   /// DetectionActiveView에서 listen해서 탐지 상태 표시에 활용
   final _captureEventController = StreamController<CaptureEvent>.broadcast();
@@ -85,12 +88,16 @@ class CameraService {
       );
 
       await _controller!.initialize();
+
+      // initialize() 완료 전에 stop()이 호출된 경우 중단
+      if (_controller == null) return;
+
       debugPrint('🟡 [Camera] 카메라 초기화 완료 / 모드: $mode');
 
       _isRunning = true;
       _currentMode = mode;
 
-      // 1초마다 _captureAndSend 실행
+      // 0.5초마다 _captureAndSend 실행
       _captureTimer = Timer.periodic(
         _captureInterval,
         (_) => _captureAndSend(),
@@ -108,14 +115,17 @@ class CameraService {
   Future<void> stop() async {
     if (!_isRunning) return;
 
+    // 먼저 플래그를 내려서 진행 중인 캡처가 컨트롤러에 접근하지 못하게 막음
+    _isRunning = false;
+    _currentMode = null;
+
     _captureTimer?.cancel();
     _captureTimer = null;
 
-    await _controller?.dispose();
+    final controller = _controller;
     _controller = null;
+    await controller?.dispose();
 
-    _isRunning = false;
-    _currentMode = null;
     debugPrint('🟡 [Camera] 카메라 정지 완료');
   }
 
@@ -124,27 +134,39 @@ class CameraService {
   /// 사진을 찍고 서버로 전송한다.
   /// 성공/실패 결과를 captureEventStream으로 내보낸다.
   Future<void> _captureAndSend() async {
+    if (!_isRunning || _isSending) return;
     if (_controller == null || !_controller!.value.isInitialized) return;
 
+    _isSending = true;
     try {
       final file = await _controller!.takePicture();
+
+      // takePicture 완료 후 이미 stop()이 호출됐으면 중단
+      if (!_isRunning) return;
+
       final bytes = await file.readAsBytes();
 
       debugPrint('🟡 [Camera] 캡처 완료 (${bytes.length} bytes) → 전송 시작');
       final success = await _sendFrame(bytes);
 
-      _captureEventController.add(
-        CaptureEvent(
-          time: DateTime.now(),
-          success: success,
-          bytes: bytes.length,
-        ),
-      );
+      if (!_captureEventController.isClosed) {
+        _captureEventController.add(
+          CaptureEvent(
+            time: DateTime.now(),
+            success: success,
+            bytes: bytes.length,
+          ),
+        );
+      }
     } catch (e) {
       debugPrint('🔴 [Camera] 캡처 실패: $e');
-      _captureEventController.add(
-        CaptureEvent(time: DateTime.now(), success: false, bytes: 0),
-      );
+      if (!_captureEventController.isClosed) {
+        _captureEventController.add(
+          CaptureEvent(time: DateTime.now(), success: false, bytes: 0),
+        );
+      }
+    } finally {
+      _isSending = false;
     }
   }
 
